@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED=1 \
     UV_COMPILE_BYTECODE=1 \
     UV_NO_DEV=1 \
     UV_FROZEN=1 \
-    PYTHONPATH=/app \
+    PYTHONPATH=/app
 
 RUN pip install --no-cache-dir uv
 
