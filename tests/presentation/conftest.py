@@ -19,7 +19,11 @@ JWT_SECRET = "test-secret-key-that-is-long-enough"
 JWT_ALGORITHM = "HS256"
 
 _test_settings = Settings(
-    database_url="postgresql+asyncpg://fake:fake@localhost/fake",
+    postgres_host="localhost",
+    postgres_database_name="fake",
+    postgres_password="fake",
+    postgres_port=5432,
+    postgres_username="fake",
     jwt_secret=JWT_SECRET,
     jwt_algorithm=JWT_ALGORITHM,
     kafka_bootstrap_servers="localhost:9092",
