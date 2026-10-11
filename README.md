@@ -36,13 +36,18 @@ make outbox-relay
 
 ## Переменные окружения
 
-| Переменная                  | По умолчанию                                                   | Описание                        |
-|-----------------------------|----------------------------------------------------------------|---------------------------------|
-| `DATABASE_URL`              | `postgresql+asyncpg://postgres:postgres@localhost:5434/ads_db` | Строка подключения к PostgreSQL |
-| `JWT_SECRET`                | `change-me`                                                    | Секрет для подписи JWT          |
-| `JWT_ALGORITHM`             | `HS256`                                                        | Алгоритм подписи                |
-| `KAFKA_BOOTSTRAP_SERVERS`   | `localhost:9092`                                               | Kafka-брокеры                   |
-| `KAFKA_TOPIC_ADS`           | `ads`                                                          | Топик для событий объявлений    |
+| Переменная                    | По умолчанию            | Описание                        |
+|-------------------------------|-------------------------|---------------------------------|
+| `POSTGRES_HOST`               | — (обязательная)        | Хост PostgreSQL                 |
+| `POSTGRES_PORT`               | — (обязательная)        | Порт PostgreSQL                 |
+| `POSTGRES_DATABASE_NAME`      | — (обязательная)        | Имя базы данных                 |
+| `POSTGRES_USERNAME`           | — (обязательная)        | Пользователь PostgreSQL         |
+| `POSTGRES_PASSWORD`           | — (обязательная)        | Пароль PostgreSQL               |
+| `JWT_SECRET`                  | `change-me`             | Секрет для подписи JWT          |
+| `JWT_ALGORITHM`               | `HS256`                 | Алгоритм подписи                |
+| `KAFKA_BROKERS`               | `localhost:9092`        | Kafka-брокеры                   |
+| `KAFKA_TOPIC_MARKETPLACE_ADS` | `ads`                   | Топик для событий объявлений    |
+| `AUTH_SERVICE_URL`            | `http://localhost:8000` | URL сервиса авторизации         |
 
 ## API
 

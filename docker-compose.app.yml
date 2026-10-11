@@ -60,7 +60,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USERNAME: postgres
-      KAFKA_BOOTSTRAP_SERVERS: redpanda:29092
+      KAFKA_BROKERS: redpanda:29092
       AUTH_SERVICE_URL: http://auth-service:8000
       JWT_SECRET: ${JWT_SECRET:-change-me}
     depends_on:
@@ -83,7 +83,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USERNAME: postgres
-      KAFKA_BOOTSTRAP_SERVERS: redpanda:29092
+      KAFKA_BROKERS: redpanda:29092
     depends_on:
       ad-postgres:
         condition: service_healthy
