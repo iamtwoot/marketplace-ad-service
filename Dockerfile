@@ -19,6 +19,6 @@ COPY . .
 
 RUN uv sync --frozen --no-dev
 
-EXPOSE 8000
+EXPOSE 8002
 
 CMD ["bash", "./run.sh"]
