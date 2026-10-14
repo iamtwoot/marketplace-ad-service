@@ -84,9 +84,9 @@ Publish-after-commit по наивному сценарию (`send_and_wait` п�
 В Kafka уходят тонкие события:
 
 ```json
-{ "event": "ad.created", "ad_id": 7 }
-{ "event": "ad.updated", "ad_id": 7 }
-{ "event": "ad.deleted", "ad_id": 7 }
+{ "event": "ad.created", "payload": { "ad_id": 7 } }
+{ "event": "ad.updated", "payload": { "ad_id": 7 } }
+{ "event": "ad.deleted", "payload": { "ad_id": 7 } }
 ```
 
 Потребитель (Search Service) подтягивает актуальные данные объявления через `GET /internal/ads/{id}`.
