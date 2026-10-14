@@ -1,6 +1,6 @@
 # Ad Service
 
-CRUD объявлений для маркетплейса. При создании, обновлении и удалении пишет событие в **outbox-таблицу** в той же транзакции; отдельный воркер (`outbox-relay`) разгребает outbox и шлёт тонкие события в Kafka. Search Service подписан на эти события и дёргает `/internal/ads/{id}`. Токены JWT валидируются локально общим `JWT_SECRET`.
+CRUD объявлений для маркетплейса. При создании, обновлении и удалении пишет событие в **outbox-таблицу** в той же транзакции; отдельный воркер (`make outbox`) разгребает outbox и шлёт тонкие события в Kafka. Search Service подписан на эти события и дёргает `/internal/ads/{id}`. Токены JWT валидируются локально общим `JWT_SECRET`.
 
 ## Стек
 
@@ -20,7 +20,7 @@ uv sync
 docker compose up -d
 
 # Переменные окружения
-cp .env .env.local  # или отредактировать .env
+cp .env.example .env  # или отредактировать .env
 
 # Миграции
 make migrate
@@ -29,7 +29,7 @@ make migrate
 make run
 
 # В соседнем терминале — relay, который шлёт события из outbox в Kafka
-make outbox-relay
+make outbox
 ```
 
 Сервер стартует на `http://localhost:8002`.
@@ -47,7 +47,7 @@ make outbox-relay
 | `JWT_ALGORITHM`               | `HS256`                 | Алгоритм подписи                |
 | `KAFKA_BROKERS`               | `localhost:9092`        | Kafka-брокеры                   |
 | `KAFKA_TOPIC_MARKETPLACE_ADS` | `ads`                   | Топик для событий объявлений    |
-| `AUTH_SERVICE_URL`            | `http://localhost:8000` | URL сервиса авторизации         |
+| `AUTH_SERVICE_URL`            | `http://localhost:8000` | URL Auth Service (имя автора)   |
 
 ## API
 
@@ -55,9 +55,9 @@ make outbox-relay
 
 | Метод    | Путь         | Описание                          | Auth   |
 |----------|--------------|-----------------------------------|--------|
-| `GET`    | `/ads`       | Список с фильтрами и пагинацией   | Нет    |
+| `GET`    | `/ads`       | Список с пагинацией               | Нет    |
 | `GET`    | `/ads/my`    | Мои объявления                    | Bearer |
-| `GET`    | `/ads/{id}`  | Одно объявление, +views           | Нет    |
+| `GET`    | `/ads/{id}`  | Одно объявление                   | Нет    |
 | `POST`   | `/ads`       | Создать объявление                | Bearer |
 | `PUT`    | `/ads/{id}`  | Обновить (только автор)           | Bearer |
 | `DELETE` | `/ads/{id}`  | Soft-delete (status=archived)     | Bearer |
@@ -75,7 +75,7 @@ make outbox-relay
 Publish-after-commit по наивному сценарию (`send_and_wait` после `uow.commit`) теряет события, если процесс падает между коммитом и отправкой. Чтобы этого не было, используется **Outbox-паттерн**:
 
 1. Use case в одной транзакции пишет строку в таблицу `outbox` (`event_type`, `payload`) **и** изменение объявления — либо обе записи закоммитятся, либо ни одна.
-2. Отдельный процесс `make outbox-relay` крутит цикл:
+2. Отдельный процесс `make outbox` крутит цикл:
    - `SELECT ... FROM outbox WHERE published_at IS NULL ... FOR UPDATE SKIP LOCKED LIMIT N`
    - шлёт каждое сообщение в Kafka
    - проставляет `published_at = now()`
@@ -100,7 +100,8 @@ Publish-after-commit по наивному сценарию (`send_and_wait` п�
 | Команда                          | Описание                          |
 |----------------------------------|-----------------------------------|
 | `make run`                       | Запуск сервера                    |
-| `make outbox-relay`              | Воркер: outbox → Kafka            |
+| `make outbox`                    | Воркер: outbox → Kafka            |
+| `make seed`                      | Тестовые данные из `seed.json`    |
 | `make check`                     | Линтинг + форматирование (ruff)   |
 | `make test`                      | Запуск тестов                     |
 | `make lint`                      | `ruff check --fix`                |
