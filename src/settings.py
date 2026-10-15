@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     kafka_topic_marketplace_ads: str = "ads"
     auth_service_url: str = "http://localhost:8000"
 
+    port: int = 8000
+
     @property
     def database_url(self) -> str:
         return f"postgresql+asyncpg://{self.postgres_username}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_database_name}"
