@@ -1,9 +1,9 @@
 import asyncio
-import logging
 
 from aiokafka import AIOKafkaProducer
 
 from src.application.services.outbox_relay import OutboxRelay
+from src.infrastructure.logging_config import configure_logging
 from src.infrastructure.messaging.kafka_broker import KafkaMessageBroker, serialize
 from src.infrastructure.persistence.database import (
     create_engine,
@@ -14,7 +14,7 @@ from src.settings import Settings
 
 
 async def main() -> None:
-    logging.basicConfig(level=logging.INFO)
+    configure_logging()
     settings = Settings()
     engine = create_engine(settings)
     session_factory = create_session_factory(engine)

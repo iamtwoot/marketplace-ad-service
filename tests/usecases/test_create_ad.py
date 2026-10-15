@@ -1,5 +1,6 @@
 import pytest
 
+from src.application.tracing import reset_trace_id, set_trace_id
 from src.application.usecases.create_ad import CreateAd
 from tests.conftest import FakeUnitOfWork
 
@@ -26,3 +27,23 @@ async def test_create_ad_persists_and_writes_outbox(fake_uow: FakeUnitOfWork) ->
     message = fake_uow.outbox.messages[0]
     assert message.event_type == "ad.created"
     assert message.payload == {"ad_id": 1}
+
+
+@pytest.mark.asyncio
+async def test_create_ad_writes_current_trace_id_to_outbox(
+    fake_uow: FakeUnitOfWork,
+) -> None:
+    token = set_trace_id("trace-create")
+    try:
+        await CreateAd(fake_uow).execute(
+            user_id=1,
+            title="MacBook Pro",
+            description="16 inch",
+            price=120000,
+            category="Электроника",
+            city="Москва",
+        )
+    finally:
+        reset_trace_id(token)
+
+    assert fake_uow.outbox.messages[0].trace_id == "trace-create"
